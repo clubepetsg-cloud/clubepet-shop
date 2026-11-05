@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+# Project rules
+
+- Products live in the `products` table; the store page keeps a static fallback list only for first render. Why: the owner edits products from /admin without code changes.
+- The first account created becomes admin (trigger on signup); writes to products and product photos are admin-only via RLS. Why: single-owner store.
+- Product photos are in a private storage bucket and saved as long-lived signed URLs. Why: public buckets are blocked in this workspace.
