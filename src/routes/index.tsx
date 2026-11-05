@@ -82,7 +82,7 @@ function Card({ product, onSelect }: { product: Product; onSelect: () => void })
   return (
     <button onClick={onSelect} className="overflow-hidden rounded-2xl border border-[var(--line)] bg-white text-left transition-transform duration-150 active:scale-[0.98]">
       <div className="relative aspect-[4/5] bg-[var(--mint-soft)]">
-        <Img src={product.photos[0]} alt={product.name} className="h-full w-full object-cover" />
+        <Img src={product.photos[0] ?? ""} alt={product.name} className="h-full w-full object-cover" />
         {product.photos.length > 1 && (
           <span className="absolute bottom-2 right-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold text-white">{product.photos.length} fotos</span>
         )}
@@ -113,10 +113,10 @@ function Lightbox({ photos, name, index, setIndex, onClose }: { photos: string[]
   return (
     <div
       className="pointer-events-auto fixed inset-0 z-[80] flex flex-col bg-black" role="dialog" aria-modal="true" aria-label={`Foto ampliada de ${name}`}
-      onTouchStart={(e) => (touch.current = e.touches[0].clientX)}
+      onTouchStart={(e) => (touch.current = e.touches[0]!.clientX)}
       onTouchEnd={(e) => {
         if (touch.current == null) return;
-        const d = e.changedTouches[0].clientX - touch.current;
+        const d = e.changedTouches[0]!.clientX - touch.current;
         if (Math.abs(d) > 48) setIndex((i) => (i + (d < 0 ? 1 : -1) + n) % n);
         touch.current = null;
       }}
@@ -147,7 +147,7 @@ function Lightbox({ photos, name, index, setIndex, onClose }: { photos: string[]
 
 function ProductSheet({ product: p, onClose }: { product: Product; onClose: () => void }) {
   const [idx, setIdx] = useState(0);
-  const [size, setSize] = useState<string | null>(p.sizes ? (p.sizes.includes("M") ? "M" : p.sizes[0]) : null);
+  const [size, setSize] = useState<string | null>(p.sizes ? (p.sizes.includes("M") ? "M" : (p.sizes[0] ?? null)) : null);
   const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState(false);
   const sizeLabel = p.sizes ? size ?? "a combinar" : "Tamanho único";
@@ -161,7 +161,7 @@ function ProductSheet({ product: p, onClose }: { product: Product; onClose: () =
           <Dialog.Description className="sr-only">Detalhes do produto, escolha de tamanho e quantidade, e pedido pelo WhatsApp.</Dialog.Description>
           <div className="relative">
             <button onClick={() => setZoom(true)} aria-label="Ampliar foto do produto" className="block w-full cursor-zoom-in">
-              <div className="aspect-square w-full bg-[var(--mint-soft)]"><Img src={p.photos[idx]} alt={p.name} className="h-full w-full object-cover" /></div>
+              <div className="aspect-square w-full bg-[var(--mint-soft)]"><Img src={p.photos[idx] ?? ""} alt={p.name} className="h-full w-full object-cover" /></div>
             </button>
             <button onClick={onClose} aria-label="Fechar detalhes" className="absolute right-3 top-3 rounded-full bg-black/55 p-2 text-white hover:bg-black/75"><X size={20} /></button>
             {p.photos.length > 1 && <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-bold text-white">Toque na foto para ampliar</span>}
