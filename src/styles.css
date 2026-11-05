@@ -142,3 +142,13 @@
     color: var(--color-foreground);
   }
 }
+
+:root{--bg:#ffffff;--ink:#2d4a32;--ink-soft:#5f7d66;--mint:#a8d5ba;--mint-deep:#5da87c;--mint-soft:#edf6f0;--mint-faint:#f8fcf9;--wa:#25d366;--wa-deep:#1eb356;--line:#e4efe8;--safe-area-inset-top:0px}
+html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+body{-webkit-font-smoothing:antialiased;font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Helvetica Neue,sans-serif}
+.font-display{font-family:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN",system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{scrollbar-width:none}
+@keyframes fade-in{0%{opacity:0}to{opacity:1}}
+@keyframes sheet-in{0%{transform:translateY(28px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes floaty{0%,to{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.animate-floaty{animation:floaty 4s ease-in-out infinite}
