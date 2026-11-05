@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type ComponentType } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ComponentType } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Check, ChevronLeft, ChevronRight, Dog, Footprints, House, MessageCircle, Minus,
@@ -39,7 +40,7 @@ const CATS: Cat[] = [
 const v = (id: string, name: string, a: string, b: string, featured = false): Product => ({
   id, name, category: "vestidos", price: 89.9, sizes: SIZES, featured, photos: [img(a), img(b)],
 });
-const PRODUCTS: Product[] = [
+const STATIC_PRODUCTS: Product[] = [
   v("vestido-fada", "Vestido Fada", "tJWygM4j/IMG-2516", "05w9Zbdc/IMG-2517", true),
   v("vestido-roxo-laco", "Vestido Roxo Laço", "t4X1LhBp/IMG-2512", "T3RyZrty/IMG-2513"),
   v("vestido-creme", "Vestido Creme", "tRk82Qvd/IMG-2510", "dQ6g4PN2/IMG-2511"),
@@ -61,6 +62,8 @@ const PRODUCTS: Product[] = [
   { id: "escova-fluffie", name: "Escova Massageadora Fluffie", category: "brinquedos", price: 24.99, sizes: null, photos: [img("PxXNnnW6/IMG-2446"), img("RFSqxx7d/IMG-2447")] },
   { id: "roleta-petisco", name: "Roleta de Petisco", category: "brinquedos", price: 49.9, sizes: null, photos: [img("NMsLvv6J/IMG-2451"), img("vBYDwwr0/IMG-2452")] },
 ];
+
+const ProductsCtx = createContext<Product[]>(STATIC_PRODUCTS);
 
 const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const catOf = (p: Product) => CATS.find((c) => c.id === p.category)!;
@@ -216,6 +219,7 @@ function ProductSheet({ product: p, onClose }: { product: Product; onClose: () =
 type Tab = "home" | "products" | "club" | "whats";
 
 function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCategory: (c: string) => void; onSelect: (p: Product) => void }) {
+  const PRODUCTS = useContext(ProductsCtx);
   const featured = PRODUCTS.filter((p) => p.featured);
   return (
     <div>
@@ -279,6 +283,7 @@ function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCate
 }
 
 function Products({ category, setCategory, onSelect }: { category: string; setCategory: (c: string) => void; onSelect: (p: Product) => void }) {
+  const PRODUCTS = useContext(ProductsCtx);
   const list = category === "all" ? PRODUCTS : PRODUCTS.filter((p) => p.category === category);
   const chips = [{ id: "all", name: "Todos" }, ...CATS.map((c) => ({ id: c.id, name: c.name }))];
   return (
@@ -354,6 +359,13 @@ function App() {
   const [category, setCategory] = useState("all");
   const [selected, setSelected] = useState<Product | null>(null);
   const ready = useRef(false);
+  const [products, setProducts] = useState<Product[]>(STATIC_PRODUCTS);
+
+  useEffect(() => {
+    supabase.from("products").select("*").order("sort_order").order("created_at").then(({ data }) => {
+      if (data) setProducts(data.map((r) => ({ id: r.id, name: r.name, category: r.category, price: Number(r.price), sizes: r.sizes && r.sizes.length ? r.sizes : null, featured: r.featured, photos: r.photos })));
+    });
+  }, []);
 
   useEffect(() => {
     const h = window.location.hash.replace("#", "");
@@ -367,6 +379,7 @@ function App() {
   }, [tab]);
 
   return (
+    <ProductsCtx.Provider value={products}>
     <div className="min-h-dvh overflow-x-clip bg-[var(--bg)] text-[var(--ink)]">
       <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-3xl flex-col items-center px-4 pb-2.5 pt-3">
@@ -402,5 +415,6 @@ function App() {
       </nav>
       {selected && <ProductSheet key={selected.id} product={selected} onClose={() => setSelected(null)} />}
     </div>
+    </ProductsCtx.Provider>
   );
 }
