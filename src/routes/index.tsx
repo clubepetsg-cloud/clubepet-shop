@@ -117,6 +117,7 @@ function Lightbox({ photos, name, index, setIndex, onClose }: { photos: string[]
   return (
     <div
       className="pointer-events-auto fixed inset-0 z-[80] flex flex-col bg-black" role="dialog" aria-modal="true" aria-label={`Foto ampliada de ${name}`}
+      onClick={onClose}
       onTouchStart={(e) => (touch.current = e.touches[0]!.clientX)}
       onTouchEnd={(e) => {
         if (touch.current == null) return;
@@ -125,26 +126,30 @@ function Lightbox({ photos, name, index, setIndex, onClose }: { photos: string[]
         touch.current = null;
       }}
     >
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between gap-2 px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top))]" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} aria-label="Voltar para o produto" className="flex items-center gap-1 rounded-full bg-white/15 py-2.5 pl-2 pr-4 text-sm font-bold text-white hover:bg-white/30 active:scale-95"><ChevronLeft size={22} />Voltar</button>
         <span className="text-sm font-bold text-white/80">{index + 1} / {n}</span>
-        <button onClick={onClose} aria-label="Fechar foto ampliada" className="rounded-full bg-white/10 p-2.5 text-white hover:bg-white/25"><X size={24} /></button>
+        <button onClick={onClose} aria-label="Fechar foto ampliada" className="rounded-full bg-white/15 p-3 text-white hover:bg-white/30 active:scale-95"><X size={26} /></button>
       </div>
       <div className="relative flex min-h-0 flex-1 items-center justify-center px-2">
-        {n > 1 && <button onClick={() => setIndex((i) => (i - 1 + n) % n)} aria-label="Foto anterior" className="absolute left-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/25"><ChevronLeft size={28} /></button>}
+        {n > 1 && <button onClick={(e) => { e.stopPropagation(); setIndex((i) => (i - 1 + n) % n); }} aria-label="Foto anterior" className="absolute left-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/25"><ChevronLeft size={28} /></button>}
         {ok ? (
-          <img src={photos[index]} alt={name} draggable={false} referrerPolicy="no-referrer" onError={() => setOk(false)} className="max-h-full max-w-full select-none object-contain" />
+          <img src={photos[index]} alt={name} draggable={false} referrerPolicy="no-referrer" onError={() => setOk(false)} onClick={(e) => e.stopPropagation()} className="max-h-full max-w-full select-none object-contain" />
         ) : (
           <div className="flex flex-col items-center gap-3 text-white/60"><PawPrint size={52} strokeWidth={1.5} /><span className="text-sm font-bold">{name}</span></div>
         )}
-        {n > 1 && <button onClick={() => setIndex((i) => (i + 1) % n)} aria-label="Próxima foto" className="absolute right-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/25"><ChevronRight size={28} /></button>}
+        {n > 1 && <button onClick={(e) => { e.stopPropagation(); setIndex((i) => (i + 1) % n); }} aria-label="Próxima foto" className="absolute right-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/25"><ChevronRight size={28} /></button>}
       </div>
-      {n > 1 && (
-        <div className="flex items-center justify-center gap-2 p-5">
-          {photos.map((_, a) => (
-            <button key={a} onClick={() => setIndex(() => a)} aria-label={`Ir para foto ${a + 1}`} className={`h-2 rounded-full transition-all ${a === index ? "w-7 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`} />
-          ))}
-        </div>
-      )}
+      <div className="flex flex-col items-center gap-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2" onClick={(e) => e.stopPropagation()}>
+        {n > 1 && (
+          <div className="flex items-center justify-center gap-2">
+            {photos.map((_, a) => (
+              <button key={a} onClick={() => setIndex(() => a)} aria-label={`Ir para foto ${a + 1}`} className={`h-2 rounded-full transition-all ${a === index ? "w-7 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`} />
+            ))}
+          </div>
+        )}
+        <button onClick={onClose} aria-label="Voltar para o produto" className="flex items-center gap-1 rounded-full bg-white/15 px-5 py-2.5 text-sm font-bold text-white hover:bg-white/30 active:scale-95"><ChevronLeft size={20} />Voltar</button>
+      </div>
     </div>
   );
 }
