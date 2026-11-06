@@ -243,9 +243,10 @@ function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCate
           {CATS.map((c) => {
             const n = PRODUCTS.filter((p) => p.category === c.id).length;
             const Icon = c.icon;
+            const cover = PRODUCTS.find((p) => p.category === c.id && p.photos.some((u) => u && !u.includes("postimg.cc")))?.photos.find((u) => u && !u.includes("postimg.cc")) ?? c.cover;
             return (
               <button key={c.id} onClick={() => onCategory(c.id)} className="overflow-hidden rounded-2xl border border-[var(--line)] bg-white text-left transition-transform duration-150 active:scale-[0.98]">
-                <div className="aspect-[16/10] bg-[var(--mint-soft)]"><Img src={c.cover} alt={c.name} className="h-full w-full object-cover" /></div>
+                <div className="aspect-[16/10] bg-[var(--mint-soft)]"><Img src={cover} alt={c.name} className="h-full w-full object-cover" /></div>
                 <div className="flex items-center gap-2.5 p-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--mint-soft)] text-[var(--ink)]"><Icon size={17} /></span>
                   <span>
