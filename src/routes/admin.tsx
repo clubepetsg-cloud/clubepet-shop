@@ -23,6 +23,7 @@ const CATS = [
   { id: "vestidos", name: "Vestidos" },
   { id: "caminhada", name: "Para Caminhada" },
   { id: "peitoral", name: "Peitoral e Guias" },
+  { id: "cuidados", name: "Cuidados e Higiene" },
   { id: "brinquedos", name: "Brinquedos" },
 ];
 const SIZES = ["PP", "P", "M", "G", "GG"];

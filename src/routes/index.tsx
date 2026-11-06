@@ -34,6 +34,7 @@ const CATS: Cat[] = [
   { id: "vestidos", name: "Vestidos", tagline: "Charme para todas as ocasiões", icon: Shirt, cover: img("tJWygM4j/IMG-2516") },
   { id: "caminhada", name: "Para Caminhada", tagline: "Conforto no passeio", icon: Footprints, cover: img("kMtPMhT8/IMG-2477") },
   { id: "peitoral", name: "Peitoral e Guias", tagline: "Segurança com estilo", icon: Dog, cover: img("dt4BbJ8w/IMG-2462") },
+  { id: "cuidados", name: "Cuidados e Higiene", tagline: "Escovas e carinho no dia a dia", icon: Sparkles, cover: img("PxXNnnW6/IMG-2446") },
   { id: "brinquedos", name: "Brinquedos", tagline: "Diversão garantida", icon: ToyBrick, cover: img("vBYDww7F/IMG-2441") },
 ];
 
@@ -59,7 +60,7 @@ const STATIC_PRODUCTS: Product[] = [
   { id: "peitoral-mochila-2", name: "Peitoral Mochila 2", category: "peitoral", price: 35, sizes: null, photos: [img("4NB5DXzJ/IMG-2465")] },
   { id: "peitoral-com-top", name: "Peitoral com Top", category: "peitoral", price: 35, sizes: null, photos: [img("Hsx57XyC/IMG-2455")] },
   { id: "bolinha-automatica", name: "Bolinha Automática", category: "brinquedos", price: 19.9, sizes: null, featured: true, photos: [img("vBYDww7F/IMG-2441"), img("zBz3YYCs/IMG-2443")] },
-  { id: "escova-fluffie", name: "Escova Massageadora Fluffie", category: "brinquedos", price: 24.99, sizes: null, photos: [img("PxXNnnW6/IMG-2446"), img("RFSqxx7d/IMG-2447")] },
+  { id: "escova-fluffie", name: "Escova Massageadora Fluffie", category: "cuidados", price: 24.99, sizes: null, photos: [img("PxXNnnW6/IMG-2446"), img("RFSqxx7d/IMG-2447")] },
   { id: "roleta-petisco", name: "Roleta de Petisco", category: "brinquedos", price: 49.9, sizes: null, photos: [img("NMsLvv6J/IMG-2451"), img("vBYDwwr0/IMG-2452")] },
 ];
 
