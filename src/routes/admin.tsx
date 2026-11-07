@@ -29,7 +29,7 @@ const CATS = [
 const SIZES = ["PP", "P", "M", "G", "GG"];
 
 type Row = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured: boolean; photos: string[]; sort_order: number };
-type Draft = { id?: string; name: string; category: string; price: string; hasSizes: boolean; featured: boolean; photos: string[] };
+type Draft = { id?: string; name: string; category: string; price: string; sizes: string[]; featured: boolean; photos: string[] };
 
 const input = "w-full rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-[15px] outline-none focus:border-[var(--ink)]";
 const btn = "rounded-full bg-[var(--ink)] px-6 py-3 text-sm font-bold text-white active:scale-95 disabled:opacity-50";
@@ -121,7 +121,7 @@ function Manager() {
 
   return (
     <div>
-      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", hasSizes: true, featured: false, photos: [] })} className={`${btn} flex w-full items-center justify-center gap-2`}>
+      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", sizes: [...SIZES], featured: false, photos: [] })} className={`${btn} flex w-full items-center justify-center gap-2`}>
         <Plus size={18} />Adicionar produto
       </button>
       <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)]">{rows.length} produtos</p>
@@ -131,9 +131,9 @@ function Manager() {
             <img src={r.photos[0]} alt="" className="h-14 w-14 shrink-0 rounded-xl bg-[var(--mint-soft)] object-cover" />
             <div className="min-w-0 flex-1">
               <p className="truncate font-bold">{r.name}</p>
-              <p className="text-xs text-[var(--ink-soft)]">{brl(r.price)} · {CATS.find((c) => c.id === r.category)?.name}{r.featured ? " · Destaque" : ""}</p>
+              <p className="text-xs text-[var(--ink-soft)]">{brl(r.price)} · {CATS.find((c) => c.id === r.category)?.name}{r.sizes?.length ? ` · ${r.sizes.join("/")}` : ""}{r.featured ? " · Destaque" : ""}</p>
             </div>
-            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), hasSizes: !!r.sizes?.length, featured: r.featured, photos: r.photos })} className="p-2"><Pencil size={18} /></button>
+            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), sizes: r.sizes ? [...r.sizes] : [], featured: r.featured, photos: r.photos })} className="p-2"><Pencil size={18} /></button>
             <button aria-label="Apagar" onClick={() => remove(r)} className="p-2 text-destructive"><Trash2 size={18} /></button>
           </li>
         ))}
@@ -145,6 +145,7 @@ function Manager() {
 
 function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const [d, setD] = useState(draft);
+  const [extra, setExtra] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
@@ -163,11 +164,20 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
     setBusy(false);
   };
 
+  const addExtra = () => {
+    const s = extra.trim();
+    if (!s) return;
+    if (!d.sizes.includes(s)) setD((x) => ({ ...x, sizes: [...x.sizes, s] }));
+    setExtra("");
+  };
+
   const save = async () => {
     const price = Number(d.price.replace(/\./g, "").replace(",", "."));
     if (!d.name.trim() || !price || !d.photos.length) return setErr("Preencha nome, preço e pelo menos uma foto.");
     setBusy(true);
-    const row = { name: d.name.trim(), category: d.category, price, sizes: d.hasSizes ? SIZES : null, featured: d.featured, photos: d.photos };
+    const order = [...SIZES, ...d.sizes.filter((s) => !SIZES.includes(s))];
+    const chosen = d.sizes.filter((s) => s.trim()).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    const row = { name: d.name.trim(), category: d.category, price, sizes: chosen.length ? chosen : null, featured: d.featured, photos: d.photos };
     const { error } = d.id
       ? await supabase.from("products").update(row).eq("id", d.id)
       : await supabase.from("products").insert({ ...row, sort_order: nextOrder });
@@ -189,7 +199,27 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
           <select className={input} value={d.category} onChange={(e) => setD({ ...d, category: e.target.value })}>
             {CATS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
-          <label className="flex items-center gap-3 text-sm font-semibold"><input type="checkbox" className="h-5 w-5" checked={d.hasSizes} onChange={(e) => setD({ ...d, hasSizes: e.target.checked })} />Tem tamanhos (PP, P, M, G, GG)</label>
+          <div>
+            <p className="text-sm font-semibold">Tamanhos</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {[...SIZES, ...d.sizes.filter((s) => !SIZES.includes(s))].map((s) => {
+                const on = d.sizes.includes(s);
+                return (
+                  <button key={s} type="button" aria-pressed={on}
+                    onClick={() => setD({ ...d, sizes: on ? d.sizes.filter((x) => x !== s) : [...d.sizes, s] })}
+                    className={`rounded-full border px-4 py-2 text-sm font-bold ${on ? "border-[var(--ink)] bg-[var(--ink)] text-white" : "border-[var(--line)] bg-white text-[var(--ink-soft)]"}`}>
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-2 flex gap-2">
+              <input className={input} placeholder="Outro tamanho (ex: Único)" value={extra} onChange={(e) => setExtra(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addExtra(); } }} />
+              <button type="button" onClick={addExtra} className="shrink-0 rounded-xl border border-[var(--line)] px-4 text-sm font-bold">Incluir</button>
+            </div>
+            <p className="mt-1 text-xs text-[var(--ink-soft)]">Toque só nos tamanhos que esse produto tem. Sem nenhum marcado = tamanho único.</p>
+          </div>
           <label className="flex items-center gap-3 text-sm font-semibold"><input type="checkbox" className="h-5 w-5" checked={d.featured} onChange={(e) => setD({ ...d, featured: e.target.checked })} />Mostrar em Destaque</label>
           <div>
             <p className="text-sm font-semibold">Fotos</p>
