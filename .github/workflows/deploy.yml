@@ -18,9 +18,8 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build -- --base=/clubepet-shop/
-      
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: .output/public
       - uses: actions/deploy-pages@v4
