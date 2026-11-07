@@ -164,6 +164,13 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
     setBusy(false);
   };
 
+  const addExtra = () => {
+    const s = extra.trim();
+    if (!s) return;
+    if (!d.sizes.includes(s)) setD((x) => ({ ...x, sizes: [...x.sizes, s] }));
+    setExtra("");
+  };
+
   const save = async () => {
     const price = Number(d.price.replace(/\./g, "").replace(",", "."));
     if (!d.name.trim() || !price || !d.photos.length) return setErr("Preencha nome, preço e pelo menos uma foto.");
