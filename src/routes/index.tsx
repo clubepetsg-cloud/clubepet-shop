@@ -6,7 +6,8 @@ import {
   Check, ChevronLeft, ChevronRight, Dog, Footprints, House, MessageCircle, Minus,
   PawPrint, Plus, Shirt, ShoppingBag, Sparkles, ToyBrick, Users, X,
 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logoAsset from "@/assets/clube-pet-logo.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/")({
   head: () => ({

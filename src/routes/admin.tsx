@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Pencil, Plus, Trash2, X, LogOut, ImagePlus } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logoAsset from "@/assets/clube-pet-logo.png.asset.json";
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
