@@ -29,7 +29,7 @@ const CATS = [
 const SIZES = ["PP", "P", "M", "G", "GG"];
 
 type Row = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured: boolean; photos: string[]; sort_order: number };
-type Draft = { id?: string; name: string; category: string; price: string; hasSizes: boolean; featured: boolean; photos: string[] };
+type Draft = { id?: string; name: string; category: string; price: string; sizes: string[]; featured: boolean; photos: string[] };
 
 const input = "w-full rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-[15px] outline-none focus:border-[var(--ink)]";
 const btn = "rounded-full bg-[var(--ink)] px-6 py-3 text-sm font-bold text-white active:scale-95 disabled:opacity-50";
@@ -121,7 +121,7 @@ function Manager() {
 
   return (
     <div>
-      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", hasSizes: true, featured: false, photos: [] })} className={`${btn} flex w-full items-center justify-center gap-2`}>
+      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", sizes: [...SIZES], featured: false, photos: [] })} className={`${btn} flex w-full items-center justify-center gap-2`}>
         <Plus size={18} />Adicionar produto
       </button>
       <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)]">{rows.length} produtos</p>
@@ -133,7 +133,7 @@ function Manager() {
               <p className="truncate font-bold">{r.name}</p>
               <p className="text-xs text-[var(--ink-soft)]">{brl(r.price)} · {CATS.find((c) => c.id === r.category)?.name}{r.featured ? " · Destaque" : ""}</p>
             </div>
-            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), hasSizes: !!r.sizes?.length, featured: r.featured, photos: r.photos })} className="p-2"><Pencil size={18} /></button>
+            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), sizes: r.sizes ? [...r.sizes] : [], featured: r.featured, photos: r.photos })} className="p-2"><Pencil size={18} /></button>
             <button aria-label="Apagar" onClick={() => remove(r)} className="p-2 text-destructive"><Trash2 size={18} /></button>
           </li>
         ))}
@@ -167,7 +167,9 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
     const price = Number(d.price.replace(/\./g, "").replace(",", "."));
     if (!d.name.trim() || !price || !d.photos.length) return setErr("Preencha nome, preço e pelo menos uma foto.");
     setBusy(true);
-    const row = { name: d.name.trim(), category: d.category, price, sizes: d.hasSizes ? SIZES : null, featured: d.featured, photos: d.photos };
+    const order = [...SIZES, ...d.sizes.filter((s) => !SIZES.includes(s))];
+    const chosen = d.sizes.filter((s) => s.trim()).sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    const row = { name: d.name.trim(), category: d.category, price, sizes: chosen.length ? chosen : null, featured: d.featured, photos: d.photos };
     const { error } = d.id
       ? await supabase.from("products").update(row).eq("id", d.id)
       : await supabase.from("products").insert({ ...row, sort_order: nextOrder });
