@@ -234,15 +234,15 @@ function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCate
           <PawPrint className="animate-floaty absolute -right-5 -top-5 h-32 w-32 rotate-12 text-white/60" strokeWidth={1.25} />
           <PawPrint className="absolute bottom-8 right-28 h-10 w-10 -rotate-12 text-white/50" strokeWidth={1.5} />
           <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink-soft)]">Clube Pet</p>
-          <h1 className="font-display mt-2 max-w-[17rem] text-[30px] font-extrabold leading-[1.15]">Estilo e conforto para o seu melhor amigo</h1>
-          <p className="mt-2 max-w-[15rem] text-sm leading-relaxed text-[var(--ink-soft)]">Roupinhas, acessórios e brinquedos escolhidos com carinho.</p>
-          <div className="relative z-10 mt-5 flex flex-wrap gap-2">
+          <h1 className="font-display mt-1 max-w-[17rem] text-[30px] font-extrabold leading-[1.15]">Estilo e conforto para o seu melhor amigo</h1>
+          <p className="mt-1 max-w-[15rem] text-sm leading-relaxed text-[var(--ink-soft)]">Roupinhas, acessórios e brinquedos escolhidos com carinho.</p>
+          <div className="relative z-10 mt-3 flex flex-wrap gap-2">
             <button onClick={() => goTab("products")} className="rounded-full bg-[var(--ink)] px-6 py-3 text-sm font-bold text-white active:scale-95">Ver produtos</button>
             <button onClick={() => goTab("club")} className="rounded-full border-2 border-[var(--ink)] px-6 py-[10px] text-sm font-bold text-[var(--ink)] active:scale-95">Ser do clube</button>
           </div>
         </div>
       </section>
-      <section className="px-4 pt-8">
+      <section className="px-4 pt-4">
         <h2 className="font-display text-xl font-extrabold">Categorias</h2>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {CATS.map((c) => {
@@ -264,7 +264,7 @@ function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCate
           })}
         </div>
       </section>
-      <section className="pt-8">
+      <section className="pt-4">
         <div className="flex items-center justify-between px-4">
           <h2 className="font-display flex items-center gap-2 text-xl font-extrabold"><Sparkles size={20} className="text-[var(--mint-deep)]" />Em Destaque</h2>
           <button onClick={() => goTab("products")} className="text-sm font-bold text-[var(--mint-deep)] underline-offset-4 hover:underline">Ver tudo</button>
@@ -389,9 +389,9 @@ function App() {
     <ProductsCtx.Provider value={products}>
     <div className="min-h-dvh overflow-x-clip bg-[var(--bg)] text-[var(--ink)]">
       <header className="border-b border-[var(--line)] bg-white/95">
-        <div className="mx-auto flex max-w-3xl flex-col items-center px-4 pb-2.5 pt-3">
-          <img src={logo} alt="Clube Pet" className="h-auto w-[100px]" draggable={false} />
-          <p className="font-display mt-1 text-[15px] font-semibold italic tracking-wide text-[var(--ink-soft)]">um clube feito pra eles</p>
+        <div className="mx-auto flex max-w-3xl flex-col items-center px-4 pb-1.5 pt-2">
+          <img src={logo} alt="Clube Pet" className="-my-3 h-auto w-[100px]" draggable={false} />
+          <p className="font-display text-[15px] font-semibold italic tracking-wide text-[var(--ink-soft)]">um clube feito pra eles</p>
         </div>
       </header>
       <main className="mx-auto w-full max-w-5xl pb-32">
