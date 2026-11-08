@@ -229,8 +229,8 @@ function Home({ goTab, onCategory, onSelect }: { goTab: (t: Tab) => void; onCate
   const featured = PRODUCTS.filter((p) => p.featured);
   return (
     <div>
-      <section className="px-4 pt-5">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--mint-soft)] via-[#e3f1e8] to-[var(--mint)] p-6 sm:p-8">
+      <section className="px-4 pt-2">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--mint-soft)] via-[#e3f1e8] to-[var(--mint)] px-6 py-2 sm:px-8">
           <PawPrint className="animate-floaty absolute -right-5 -top-5 h-32 w-32 rotate-12 text-white/60" strokeWidth={1.25} />
           <PawPrint className="absolute bottom-8 right-28 h-10 w-10 -rotate-12 text-white/50" strokeWidth={1.5} />
           <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-[var(--ink-soft)]">Clube Pet</p>
@@ -388,7 +388,7 @@ function App() {
   return (
     <ProductsCtx.Provider value={products}>
     <div className="min-h-dvh overflow-x-clip bg-[var(--bg)] text-[var(--ink)]">
-      <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-white/95 backdrop-blur">
+      <header className="border-b border-[var(--line)] bg-white/95">
         <div className="mx-auto flex max-w-3xl flex-col items-center px-4 pb-2.5 pt-3">
           <img src={logo} alt="Clube Pet" className="h-auto w-[100px]" draggable={false} />
           <p className="font-display mt-1 text-[15px] font-semibold italic tracking-wide text-[var(--ink-soft)]">um clube feito pra eles</p>
