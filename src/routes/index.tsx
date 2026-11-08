@@ -390,8 +390,8 @@ function App() {
     <div className="min-h-dvh overflow-x-clip bg-[var(--bg)] text-[var(--ink)]">
       <header className="border-b border-[var(--line)] bg-white/95">
         <div className="mx-auto flex max-w-3xl flex-col items-center px-4 pb-1.5 pt-2">
-          <img src={logo} alt="Clube Pet" className="h-auto w-[100px]" draggable={false} />
-          <p className="font-display mt-1 text-[15px] font-semibold italic tracking-wide text-[var(--ink-soft)]">um clube feito pra eles</p>
+          <img src={logo} alt="Clube Pet" className="-my-3 h-auto w-[100px]" draggable={false} />
+          <p className="font-display text-[15px] font-semibold italic tracking-wide text-[var(--ink-soft)]">um clube feito pra eles</p>
         </div>
       </header>
       <main className="mx-auto w-full max-w-5xl pb-32">
