@@ -28,7 +28,7 @@ const SIZES = ["PP", "P", "M", "G", "GG"];
 const img = (s: string) => `https://i.postimg.cc/${s}.jpg`;
 
 type Cat = { id: string; name: string; tagline: string; icon: ComponentType<{ size?: number }>; cover: string };
-type Product = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured?: boolean; photos: string[]; description?: string };
+type Product = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured?: boolean; photos: string[]; description?: string | undefined };
 
 const CATS: Cat[] = [
   { id: "vestidos", name: "Vestidos", tagline: "Charme para todas as ocasiões", icon: Shirt, cover: img("tJWygM4j/IMG-2516") },
