@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Check, ChevronLeft, ChevronRight, Dog, Footprints, House, MessageCircle, Minus,
-  PawPrint, Plus, Shirt, ShoppingBag, Sparkles, ToyBrick, Users, X,
+  PawPrint, Plus, Shirt, ShoppingBag, Sparkles, ToyBrick, Truck, Users, X,
 } from "lucide-react";
 const logo = "/clube-pet-logo_cutout.png";
 
@@ -28,7 +28,7 @@ const SIZES = ["PP", "P", "M", "G", "GG"];
 const img = (s: string) => `https://i.postimg.cc/${s}.jpg`;
 
 type Cat = { id: string; name: string; tagline: string; icon: ComponentType<{ size?: number }>; cover: string };
-type Product = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured?: boolean; photos: string[] };
+type Product = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured?: boolean; photos: string[]; description?: string | undefined };
 
 const CATS: Cat[] = [
   { id: "vestidos", name: "Vestidos", tagline: "Charme para todas as ocasiões", icon: Shirt, cover: img("tJWygM4j/IMG-2516") },
@@ -41,7 +41,8 @@ const CATS: Cat[] = [
 const v = (id: string, name: string, a: string, b: string, featured = false): Product => ({
   id, name, category: "vestidos", price: 89.9, sizes: SIZES, featured, photos: [img(a), img(b)],
 });
-const STATIC_PRODUCTS: Product[] = [
+const FRETE = "Frete grátis para São Gabriel/RS.";
+const STATIC_PRODUCTS: Product[] = ([
   v("vestido-fada", "Vestido Fada", "tJWygM4j/IMG-2516", "05w9Zbdc/IMG-2517", true),
   v("vestido-roxo-laco", "Vestido Roxo Laço", "t4X1LhBp/IMG-2512", "T3RyZrty/IMG-2513"),
   v("vestido-creme", "Vestido Creme", "tRk82Qvd/IMG-2510", "dQ6g4PN2/IMG-2511"),
@@ -62,7 +63,7 @@ const STATIC_PRODUCTS: Product[] = [
   { id: "bolinha-automatica", name: "Bolinha Automática", category: "brinquedos", price: 19.9, sizes: null, featured: true, photos: [img("vBYDww7F/IMG-2441"), img("zBz3YYCs/IMG-2443")] },
   { id: "escova-fluffie", name: "Escova Massageadora Fluffie", category: "cuidados", price: 24.99, sizes: null, photos: [img("PxXNnnW6/IMG-2446"), img("RFSqxx7d/IMG-2447")] },
   { id: "roleta-petisco", name: "Roleta de Petisco", category: "brinquedos", price: 49.9, sizes: null, photos: [img("NMsLvv6J/IMG-2451"), img("vBYDwwr0/IMG-2452")] },
-];
+] as Product[]).map((p) => ({ ...p, description: FRETE }));
 
 const ProductsCtx = createContext<Product[]>(STATIC_PRODUCTS);
 
@@ -160,7 +161,7 @@ function ProductSheet({ product: p, onClose }: { product: Product; onClose: () =
   const [qty, setQty] = useState(1);
   const [zoom, setZoom] = useState(false);
   const sizeLabel = p.sizes ? size ?? "a combinar" : "Tamanho único";
-  const msg = `Olá, Clube Pet! Quero fazer um pedido:\n\nProduto: ${p.name}\nTamanho: ${sizeLabel}\nQuantidade: ${qty}\nTotal: ${brl(p.price * qty)}\n\nObrigado!`;
+  const msg = `Olá, Clube Pet! Quero fazer um pedido:\n\nProduto: ${p.name}\nTamanho: ${sizeLabel}\nQuantidade: ${qty}\nTotal: ${brl(p.price * qty)}${p.description ? `\n${p.description}` : ""}\n\nObrigado!`;
   const href = `${WA}?text=${encodeURIComponent(msg)}`;
   return (
     <Dialog.Root open onOpenChange={(o) => { if (!o && !zoom) onClose(); }}>
@@ -188,6 +189,12 @@ function ProductSheet({ product: p, onClose }: { product: Product; onClose: () =
             <p className="text-xs font-bold uppercase tracking-wider text-[var(--mint-deep)]">{catOf(p).name}</p>
             <Dialog.Title className="font-display mt-1 text-[22px] font-extrabold leading-tight">{p.name}</Dialog.Title>
             <p className="font-display mt-1.5 text-[26px] font-extrabold">{brl(p.price)}</p>
+            {p.description && (
+              <div className="mt-3 flex items-start gap-2 rounded-2xl border border-[var(--line)] bg-[var(--mint-faint)] px-4 py-3">
+                <Truck size={18} className="mt-0.5 shrink-0 text-[var(--mint-deep)]" />
+                <p className="whitespace-pre-line text-sm font-semibold leading-snug">{p.description}</p>
+              </div>
+            )}
             <div className="mt-5">
               <p className="text-sm font-bold">Tamanho</p>
               {p.sizes ? (
@@ -370,7 +377,7 @@ function App() {
 
   useEffect(() => {
     supabase.from("products").select("*").order("sort_order").order("created_at").then(({ data }) => {
-      if (data) setProducts(data.map((r) => ({ id: r.id, name: r.name, category: r.category, price: Number(r.price), sizes: r.sizes && r.sizes.length ? r.sizes : null, featured: r.featured, photos: r.photos })));
+      if (data) setProducts(data.map((r) => ({ id: r.id, name: r.name, category: r.category, price: Number(r.price), sizes: r.sizes && r.sizes.length ? r.sizes : null, featured: r.featured, photos: r.photos, description: r.description ?? undefined })));
     });
   }, []);
 

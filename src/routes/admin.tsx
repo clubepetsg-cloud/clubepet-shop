@@ -28,9 +28,10 @@ const CATS = [
   { id: "brinquedos", name: "Brinquedos" },
 ];
 const SIZES = ["PP", "P", "M", "G", "GG"];
+const FRETE = "Frete grátis para São Gabriel/RS.";
 
-type Row = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured: boolean; photos: string[]; sort_order: number };
-type Draft = { id?: string; name: string; category: string; price: string; sizes: string[]; featured: boolean; photos: string[] };
+type Row = { id: string; name: string; category: string; price: number; sizes: string[] | null; featured: boolean; photos: string[]; sort_order: number; description: string | null };
+type Draft = { id?: string; name: string; category: string; price: string; sizes: string[]; featured: boolean; photos: string[]; description: string };
 
 const input = "w-full rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-[15px] outline-none focus:border-[var(--ink)]";
 const btn = "rounded-full bg-[var(--ink)] px-6 py-3 text-sm font-bold text-white active:scale-95 disabled:opacity-50";
@@ -122,7 +123,7 @@ function Manager() {
 
   return (
     <div>
-      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", sizes: [...SIZES], featured: false, photos: [] })} className={`${btn} flex w-full items-center justify-center gap-2`}>
+      <button onClick={() => setDraft({ name: "", category: "vestidos", price: "", sizes: [...SIZES], featured: false, photos: [], description: FRETE })} className={`${btn} flex w-full items-center justify-center gap-2`}>
         <Plus size={18} />Adicionar produto
       </button>
       <p className="mt-5 text-xs font-bold uppercase tracking-wider text-[var(--ink-soft)]">{rows.length} produtos</p>
@@ -134,7 +135,7 @@ function Manager() {
               <p className="truncate font-bold">{r.name}</p>
               <p className="text-xs text-[var(--ink-soft)]">{brl(r.price)} · {CATS.find((c) => c.id === r.category)?.name}{r.sizes?.length ? ` · ${r.sizes.join("/")}` : ""}{r.featured ? " · Destaque" : ""}</p>
             </div>
-            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), sizes: r.sizes ? [...r.sizes] : [], featured: r.featured, photos: r.photos })} className="p-2"><Pencil size={18} /></button>
+            <button aria-label="Editar" onClick={() => setDraft({ id: r.id, name: r.name, category: r.category, price: String(r.price).replace(".", ","), sizes: r.sizes ? [...r.sizes] : [], featured: r.featured, photos: r.photos, description: r.description ?? "" })} className="p-2"><Pencil size={18} /></button>
             <button aria-label="Apagar" onClick={() => remove(r)} className="p-2 text-destructive"><Trash2 size={18} /></button>
           </li>
         ))}
@@ -178,7 +179,7 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
     setBusy(true);
     const order = [...SIZES, ...d.sizes.filter((s) => !SIZES.includes(s))];
     const chosen = d.sizes.filter((s) => s.trim()).sort((a, b) => order.indexOf(a) - order.indexOf(b));
-    const row = { name: d.name.trim(), category: d.category, price, sizes: chosen.length ? chosen : null, featured: d.featured, photos: d.photos };
+    const row = { name: d.name.trim(), category: d.category, price, sizes: chosen.length ? chosen : null, featured: d.featured, photos: d.photos, description: d.description.trim() || null };
     const { error } = d.id
       ? await supabase.from("products").update(row).eq("id", d.id)
       : await supabase.from("products").insert({ ...row, sort_order: nextOrder });
@@ -200,6 +201,11 @@ function Editor({ draft, nextOrder, onClose, onSaved }: { draft: Draft; nextOrde
           <select className={input} value={d.category} onChange={(e) => setD({ ...d, category: e.target.value })}>
             {CATS.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+          <div>
+            <p className="text-sm font-semibold">Descrição</p>
+            <textarea className={`${input} mt-1 min-h-[92px] resize-y`} placeholder="Ex: Frete grátis para São Gabriel/RS." value={d.description} onChange={(e) => setD({ ...d, description: e.target.value })} />
+            <p className="mt-1 text-xs text-[var(--ink-soft)]">Aparece na página do produto e na mensagem do WhatsApp.</p>
+          </div>
           <div>
             <p className="text-sm font-semibold">Tamanhos</p>
             <div className="mt-2 flex flex-wrap gap-2">
